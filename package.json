@@ -1,0 +1,25 @@
+{
+  "name": "cypher",
+  "version": "1.0.0",
+  "description": "Ai assistant",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/notunk0wn23/Cypher.git"
+  },
+  "keywords": [
+    "ai",
+    "assistant",
+    "chatgpt",
+    "huggingface"
+  ],
+  "author": "spacedouut",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/notunk0wn23/Cypher/issues"
+  },
+  "homepage": "https://github.com/notunk0wn23/Cypher#readme"
+}
