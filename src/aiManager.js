@@ -86,7 +86,7 @@ export class AIManager {
                     API.support has everything set to true by default to make it easy for people already using the latest version.
                     IF YOU HAVE A FEATURE THAT THE API CANT USE, TURN IT OFF IN SUPPORT.
                 */
-                for (const key in this.API.support) {
+                for (let key in this.API.support) {
                     if (this.API.support.hasOwnProperty(key)) {
                         body[key] = this.API.support[key] ? this.config[key] : undefined;
                     }
