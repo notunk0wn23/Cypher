@@ -4,7 +4,7 @@
   "description": "Ai assistant",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "vite"
   },
   "repository": {
     "type": "git",
@@ -21,5 +21,8 @@
   "bugs": {
     "url": "https://github.com/notunk0wn23/Cypher/issues"
   },
-  "homepage": "https://github.com/notunk0wn23/Cypher#readme"
+  "homepage": "https://github.com/notunk0wn23/Cypher#readme",
+  "dependencies": {
+    "vite": "^6.0.7"
+  }
 }

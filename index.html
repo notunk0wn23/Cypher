@@ -1,11 +1,42 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cypher</title>
+    <link rel="stylesheet" href="./src/styles/style.css">
 </head>
+
 <body>
+    <div id="app">
+        <div id="sidebar">
+            <div class="sidebar-container">
+                <h1 id="sidebarGreeting" class="sidebar-element">Cypher</h1>
+                <div id="sidebarButtons" class="sidebar-element">
+                    <button id="sidebarButton" class="sidebar-element button wide">New Chat</button>
+                </div>
+            </div>
+            <div id="chatList">
+                <!-- Chat list will appear here -->
+            </div>
+        </div>
+        <div id="main">
+    
+            <div id="chatArea">
+                <!-- Chat messages will appear here -->
+                <div id="chatMessages">
+                </div>
+                <div id="chatBox">
+                    <input type="text" id="messageInput" placeholder="Type a message...">
+                    <button id="sendButton" class="button">Send</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
     <script src="./src/index.js" type="module"></script>
 </body>
+
 </html>
