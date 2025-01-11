@@ -10,11 +10,21 @@ ai.API = {
 }
 
 await ai.get_models();
-const modelIds = ai.config.models.list.map(model => model.id);
-ai.prompt = base(modelIds);
-
+ai.prompt = base(ai.config.models.list, [
+    `
+    eval
+    Runs a javascript evaluation and returns the result.
+    Parameters:
+    - expression: The expression to evaluate.
+    
+    Example:
+    - expression: "1 + 1"
+    - result: 2
+    
+    `
+]);
+ai.config.models.active = 'llama3-8b-8192';
 ai.new_chat();
-
 
 
 // Greeting
@@ -41,25 +51,58 @@ updateGreeting();
 const chatMessages = document.getElementById('chatMessages');
 
 function updateMessages() {
-    ai.chats.active.messages.forEach(message => {
-        const messageElement = document.createElement('div');
-        messageElement.classList.add('message');
-    
-        if (message.role === 'user') {
-            messageElement.classList.add('user');
-        } else if (message.role === 'assistant') {
-            messageElement.classList.add('assistant');
-        }
-    
-        messageElement.textContent = message.content;
-    
-        chatMessages.appendChild(messageElement);
-    });
+  const existingMessages = chatMessages.children;
+  const newMessages = ai.chats.active.messages;
+
+  // Create a map of existing messages for easy lookup
+  const existingMessageMap = {};
+  Array.from(existingMessages).forEach((messageElement, index) => {
+    existingMessageMap[index] = messageElement;
+  });
+
+  // Iterate over the new messages and update the DOM accordingly
+  newMessages.forEach((message, index) => {
+    const existingMessageElement = existingMessageMap[index];
+    if (existingMessageElement) {
+      // Update the existing message element
+      existingMessageElement.textContent = message.content;
+      if (message.role === 'user') {
+        existingMessageElement.classList.add('user');
+      } else if (message.role === 'assistant') {
+        existingMessageElement.classList.add('assistant');
+      }
+    } else {
+      // Create a new message element
+      const messageElement = document.createElement('div');
+      messageElement.classList.add('message');
+      if (message.role === 'user') {
+        messageElement.classList.add('user');
+      } else if (message.role === 'assistant') {
+        messageElement.classList.add('assistant');
+      }
+      messageElement.textContent = message.content;
+      chatMessages.appendChild(messageElement);
+    }
+  });
+
+  // Remove any excess message elements
+  while (existingMessages.length > newMessages.length) {
+    chatMessages.removeChild(existingMessages[existingMessages.length - 1]);
+  }
 }
 
 updateMessages();
 
-
+// Send message on button click
+document.getElementById('sendButton').addEventListener('click', async () => {
+    const messageInput = document.getElementById('messageInput');
+    const message = messageInput.value;
+    if (message) {
+        ai.send_message('user', message);
+        messageInput.value = '';
+        updateMessages();
+        await ai.get_response();
+        updateMessages();
+    }
+});
 window.ai = ai;
-
-document.rootElement.classList.toggle('dark-theme');
