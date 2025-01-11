@@ -68,17 +68,44 @@ export class AIManager {
         this.chats.active = new Chat(this.basePrompt);
     }
 
-    async send_message(role, content) {
-        
+    async send_message(type, content, toolcall=false, toolcall_data=false) {
+        if (type === 'user' || type === 'system') {
+            this.chats.active.messages.push({type, content});
+        } else if (type === 'assistant') {
+            /*if (toolcall) {
+                this.tool_call_handler(toolcall, toolcall_data);
+            }*/
+           let message = {role: 'assistant', content};
+           if (toolcall) {
+                message.toolcall = toolcall;
+                message.toolcall_data = toolcall_data;
+            }
+            this.chats.active.messages.push(message);
+        } else if (type === 'toolcall_response') {
+            this.chats.active.messages.push({role: 'toolcall_response', data: content});
+        } else {
+            throw new Error('Unsupported message type');
+        }
     }
 
     async get_response() {
         let response;
+
+        const messages = [{role: 'system', content: this.prompt}];
+        this.chats.active.messages.forEach((message, index) => {
+            if (index % 2 === 0) {
+                messages.push({role: 'user', content: JSON.stringify(message)});
+            } else {
+                messages.push({role: 'assistant', content: JSON.stringify(message)});
+            }
+        });
+
+        console.log(messages);
         switch (this.API.type) {
             case 'openai':
                 const body = {
                     model: this.config.models.active,
-                    messages: this.chats.active.messages
+                    messages: messages
                 };
 
                 /*
@@ -92,7 +119,7 @@ export class AIManager {
                     }
                 }
 
-                const response = await fetch(this.API.endpoint + '/chat/completions', {
+                response = await fetch(this.API.endpoint + '/chat/completions', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -121,7 +148,7 @@ export class AIManager {
                         }
                     })
                 });
-                response = await response.text();
+                response = await response.json();
                 break;
             default:
                 throw new Error('Unsupported API type');
@@ -130,12 +157,19 @@ export class AIManager {
 
         const message = JSON.parse(response);
 
-        this.chats.active.messages.push(JSON.parse(response));
+        if (message.toolcall) {
+            this.tool_call_handler(message.toolcall, message.toolcall_data);
+            this.send_message('assistant', message.content, message.toolcall, message.toolcall_data);
+        } else {
+            this.send_message('assistant', message.content);
+        }
     }
     
-    tool_call_handler(tool, data) {
-        switch (tool) {
-            
+    tool_call_handler(toolcall, toolcall_data) {
+        console.log(toolcall);
+        console.log(toolcall_data);
+        if (toolcall === 'eval') {
+            this.send_message('toolcall_response', eval(toolcall_data.expression));
         }
     }
 }
