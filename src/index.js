@@ -6,7 +6,13 @@ const ai = new AIManager();
 ai.API = {
     type: 'openai',
     key: import.meta.env.VITE_API_KEY,
-    endpoint: 'https://api.groq.com/openai/v1'
+    endpoint: 'https://api.groq.com/openai/v1',
+    support: {
+        temperature: false,
+        top_p: false,
+        max_tokens: false,
+        max_length: false,
+    }
 }
 
 await ai.get_models();
