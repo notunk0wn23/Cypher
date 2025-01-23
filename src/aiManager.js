@@ -1,29 +1,28 @@
 class Chat {
     constructor(base) {
         this.messages = [];
-        if (base) this.messages.push({role: 'system', content: base});
+        if (base) this.messages.push({ role: 'system', content: base });
     }
 }
 
 export class AIManager {
     constructor() {
-         this.API = {
+        this.API = {
             type: 'openai',
             key: 'import.meta.env.VITE_API_KEY',
             endpoint: '',
             support: {
-                temp: true,
-                top_p: true,
-                max_tokens: true,
-                max_length: true,
-                tools: true
+                temp: false,
+                top_p: false,
+                max_tokens: false,
+                max_length: false,
             }
-         }
-         this.chats = {
+        };
+        this.chats = {
             active: null,
             list: []
-         }
-         this.config = {
+        };
+        this.config = {
             models: {
                 active: '',
                 list: []
@@ -32,73 +31,85 @@ export class AIManager {
             max_tokens: 100,
             max_length: 100,
             top_p: 0.9
-        }
-
+        };
         this.prompt = '';
     }
 
     async get_models() {
-        let response;
-        switch (this.API.type) {
-            case 'openai':
-                response = await fetch(this.API.endpoint + '/models', {
-                    method: 'GET',
-                    headers: {
-                        'Authorization': `Bearer ${this.API.key}`
-                    }
-                });
-                break;
-            case 'huggingface':
-                response = await fetch(this.API.endpoint + '/api/models', {
-                    method: 'GET',
-                    headers: {
-                        'Authorization': `Bearer ${this.API.key}`
-                    }
-                });
-                break;
-            default:
-                throw new Error('Unsupported API type');
+        try {
+            let response;
+            switch (this.API.type) {
+                case 'openai':
+                    response = await fetch(this.API.endpoint + '/models', {
+                        method: 'GET',
+                        headers: {
+                            'Authorization': `Bearer ${this.API.key}`
+                        }
+                    });
+                    break;
+                case 'huggingface':
+                    response = await fetch(this.API.endpoint + '/api/models', {
+                        method: 'GET',
+                        headers: {
+                            'Authorization': `Bearer ${this.API.key}`
+                        }
+                    });
+                    break;
+                default:
+                    throw new Error('Unsupported API type');
+            }
+
+            if (!response.ok) {
+                throw new Error(`Error fetching models: ${response.statusText}`);
+            }
+
+            const data = await response.json();
+            if (data && data.data) {
+                this.config.models.list = data.data;
+            } else {
+                throw new Error('Invalid response format');
+            }
+        } catch (error) {
+            console.error('Failed to fetch models:', error);
         }
-        const data = await response.json();
-        console.log(data);
-        this.config.models.list = data.data;
     }
 
     new_chat() {
         this.chats.active = new Chat(this.basePrompt);
     }
 
-    async send_message(type, content, toolcall=false, toolcall_data=false) {
+    async send_message(type, content, toolcall = false, toolcall_data = false) {
         if (type === 'user' || type === 'system') {
-            this.chats.active.messages.push({type, content});
+            this.chats.active.messages.push({ type, content });
         } else if (type === 'assistant') {
-            /*if (toolcall) {
-                this.tool_call_handler(toolcall, toolcall_data);
-            }*/
-           let message = {role: 'assistant', content};
-           if (toolcall) {
+            let message = { role: 'assistant', content };
+            if (toolcall) {
                 message.toolcall = toolcall;
                 message.toolcall_data = toolcall_data;
             }
             this.chats.active.messages.push(message);
         } else if (type === 'toolcall_response') {
-            this.chats.active.messages.push({role: 'toolcall_response', data: content});
+            this.chats.active.messages.push({ role: 'toolcall_response', data: content });
         } else {
             throw new Error('Unsupported message type');
         }
     }
 
-    async get_response() {
-        let response;
-
-        const messages = [{role: 'system', content: this.prompt}];
+    fetch_standardized_messages() {
+        // Converts message storage to a more standard, regular format
+        const messages = [{ role: 'system', content: this.prompt }];
         this.chats.active.messages.forEach((message, index) => {
             if (index % 2 === 0) {
-                messages.push({role: 'user', content: JSON.stringify(message)});
+                messages.push({ role: 'user', content: JSON.stringify(message) });
             } else {
-                messages.push({role: 'assistant', content: JSON.stringify(message)});
+                messages.push({ role: 'assistant', content: JSON.stringify(message) });
             }
         });
+        return messages;
+    }
+
+    async get_response() {
+        let response;
 
         console.log(messages);
         switch (this.API.type) {
@@ -157,13 +168,13 @@ export class AIManager {
                         .map(message => {
                             return {
                                 role: message.role === 'assistant' ? 'model' : message.role,
-                                parts: [{ 
+                                parts: [{
                                     text: message.content
                                 }]
                             }
                         })
                 };
-                
+
                 // google why must you make my life this hard
                 response = await fetch(encodeURIComponent(this.API.endpoint + '/models/' + this.config.models.active + ':generateContent?key=' + this.API.key), {
                     method: 'POST',
@@ -197,7 +208,7 @@ export class AIManager {
             this.send_message('assistant', message.content);
         }
     }
-    
+
     tool_call_handler(toolcall, toolcall_data) {
         console.log(toolcall);
         console.log(toolcall_data);
