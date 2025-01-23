@@ -127,3 +127,15 @@ body {
     background-color: var(--sidebar-background-color);
     color: var(--text-color);
 }
+
+.message {
+    background-color: var(--sidebar-background-color);
+    color: var(--text-color);
+    border-radius: 20px;
+    padding: 12.5px 20px;
+    font-family: 'Telegraf Regular', sans-serif;
+    font-size: 16px;
+    align-self: flex-start;
+    max-width: 75%;
+    word-wrap: break-word;
+}
