@@ -150,6 +150,39 @@ export class AIManager {
                 });
                 response = await response.json();
                 break;
+            case 'google':
+                const request = {
+                    contents: this.chats.active.messages
+                        .filter(message => message.role !== 'system')
+                        .map(message => {
+                            return {
+                                role: message.role === 'assistant' ? 'model' : message.role,
+                                parts: [{ 
+                                    text: message.content
+                                }]
+                            }
+                        })
+                };
+                
+                // google why must you make my life this hard
+                response = await fetch(encodeURIComponent(this.API.endpoint + '/models/' + this.config.models.active + ':generateContent?key=' + this.API.key), {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${this.API.key}`
+                    },
+                    body: JSON.stringify({
+                        system_instruction: {
+                            parts: { text: this.chats.active.messages[0].content }
+                        },
+                        contents: request.contents,
+                        generationConfig: {
+                            temperature: this.config.temperature,
+                            maxOutputTokens: this.config.max_tokens,
+                            topP: this.config.top_p
+                        }
+                    })
+                })
             default:
                 throw new Error('Unsupported API type');
                 break;
