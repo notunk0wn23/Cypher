@@ -3,139 +3,19 @@
     src: local('Telegraf Regular'), url('../fonts/Telegraf_Regular.woff') format('woff');
 }
 
-
 @font-face {
     font-family: 'Telegraf UltraLight';
     src: local('Telegraf UltraLight'), url('../fonts/Telegraf_UltraLight\ 200.woff') format('woff');
 }
-
 
 @font-face {
     font-family: 'Telegraf UltraBold';
     src: local('Telegraf UltraBold'), url('../fonts/Telegraf_UltraBold\ 800.woff') format('woff');
 }
 
-:root {
-    --background-color: #fff1dc;
-    --sidebar-background-color: #e1d5c3;
-    --text-color: #000000;
-    --button-text-color: #ffffff;
-    --primary-color: #cd5f44;
-    --primary-color-hover: #cd5234;
-    --primary-color-outline: #57281c;
-}
-
-:root {
-    --background-color: #181818;
-    --sidebar-background-color: #121212;
-    --text-color: #ffffff;
-    --button-text-color: #ffffff;
-    --primary-color: #cd5f44;
-    --primary-color-hover: #cd5234;
-    --primary-color-outline: #57281c;
-}
-
 
 html,
 body {
-    font-family: 'Telegraf Regular', sans-serif;
     margin: 0;
 }
 
-#app {
-    display: flex;
-    height: 100vh;
-    width: 100vw;
-    background-color: var(--background-color);
-    color: var(--text-color);
-
-}
-
-#sidebar {
-    flex: 1;
-    max-width: 250px;
-    background-color: var(--sidebar-background-color);
-    padding: 20px;
-    overflow-y: scroll;
-}
-
-.button {
-    background-color: var(--primary-color);
-    color: var(--button-text-color);
-    border: none;
-    cursor: pointer;
-    border-radius: 50px;
-    font-family: 'Telegraf Regular', sans-serif;
-    font-size: 16px;
-
-    padding: 12.5px 20px;
-
-    transition: background-color 0.3s ease;
-}
-
-
-.button:hover {
-    background-color: var(--primary-color-hover);
-}
-
-.wide {
-    width: 100%;
-}    
-
-#main {
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-    overflow-y: scroll;
-    gap: 10px;
-    padding: 25px;
-}
-
-#chatMessages {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    overflow-y: scroll;
-    padding: 20px;
-    border: 2.5px solid var(--sidebar-background-color);
-    border-radius: 25px;
-}
-
-#chatArea {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    overflow-y: scroll;
-    gap: 15px;
-}
-
-#chatBox {
-    border-radius: 50px;
-    display: flex;
-    flex-direction: row;
-    width: 100%;
-    gap: 15px;
-}
-
-#messageInput {
-    flex: 1;
-    border-radius: 50px;
-    border: none;
-    padding: 12.5px 20px;
-    font-family: 'Telegraf Regular', sans-serif;
-    font-size: 16px;
-    background-color: var(--sidebar-background-color);
-    color: var(--text-color);
-}
-
-.message {
-    background-color: var(--sidebar-background-color);
-    color: var(--text-color);
-    border-radius: 20px;
-    padding: 12.5px 20px;
-    font-family: 'Telegraf Regular', sans-serif;
-    font-size: 16px;
-    align-self: flex-start;
-    max-width: 75%;
-    word-wrap: break-word;
-}
