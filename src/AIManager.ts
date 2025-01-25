@@ -1,5 +1,3 @@
-import { v4 as uuidv4 } from 'uuid';
-
 export enum APIType {
     OpenAI,
     HuggingFace,
@@ -15,7 +13,7 @@ interface APIConfig {
 }
 
 interface ModelConfig {
-    model: string,
+    model: Model,
     temperature: number,
     max_tokens: number,
     top_p: number,
@@ -25,6 +23,8 @@ interface ModelConfig {
 interface Message {
     role: string;
     content: string;
+    timestamp: number;
+    id: string;
 }
 
 interface Model {
@@ -40,7 +40,7 @@ class Chat {
 
     constructor() {
         this.messages = [];
-        this.id = uuidv4();
+        this.id = crypto.randomUUID();
     }
 
     addMessage(message: Message) {
@@ -102,7 +102,7 @@ export class AIManager {
     }
 
     async getModels() {
-        let models: Model[] = [];
+        const models = new Map<string, Model>();
         let response: any; 
         let data: any;
 
@@ -119,9 +119,9 @@ export class AIManager {
                 data = await response.json();
                 for (let model of data.data) {
                     if (this.getModelByID(model.id)) {
-                        models.push(this.getModelByID(model.id) as Model);
+                        models.set(model.id, this.getModelByID(model.id) as Model);
                     } else {
-                        models.push({
+                        models.set(model.id, {
                             friendlyName: model.id,
                             identifier: model.id,
                             description: "Model owned by " + model.owned_by + " with a context window of " + model.context_window,
@@ -136,9 +136,9 @@ export class AIManager {
                 });
                 data = await response.json();
                 for (let model of data.results) {
-                    models.push({
+                    models.set(model.modelId, {
                         friendlyName: model.modelId.split("/")[1],
-                        name: model.modelId,
+                        identifier: model.modelId,
                         description: model.description,
                     });
                 }
@@ -149,18 +149,49 @@ export class AIManager {
                 break;
             case APIType.Pollinations:
                 response = await fetch(this.API.endpoint + "/models", {
-                    
+                    method: "GET"
                 })
+                data = await response.json();
+                for (let model of data) {
+                    if (this.getModelByID(model.name)) {
+                        models.set(model.name, this.getModelByID(model.name) as Model);
+                    } else {
+                        models.set(model.name, {
+                            friendlyName: model.name,
+                            identifier: model.name,
+                            description: model.description,
+                        });
+                    }
+                }
                 break;
-                
         }
+
+        return models;
     }
 
-    FetchResponse = async () => {
+    sendMessage(role: string, content: string, timestamp: number = Date.now()) {
+
+        this.activeChat.messages.push({
+            role: role,
+            content: content,
+            timestamp: timestamp,
+            id: crypto.randomUUID()
+        });
+    }
+
+    async fetchResponse() {
+        console.log("=== START AI RESPONSE ===")
+        console.log("Model: " + this.modelConfig.model.identifier)
         let response: string = "";
+        let apiResponse: any;
+        let data: any;
+
+    
         switch (this.API.type) {
             case APIType.OpenAI:
-                const apiResponse : any = await fetch(this.API.endpoint, {
+                console.log("API Type: OpenAI")
+                console.log("SENDING REQUEST")
+                apiResponse = await fetch(this.API.endpoint + "/completions" , {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
@@ -172,22 +203,56 @@ export class AIManager {
                         temperature: this.modelConfig.temperature,
                         max_tokens: this.modelConfig.max_tokens,
                         top_p: this.modelConfig.top_p,
-                        frequency_penalty: this.modelConfig.frequency_penalty
+                        frequency_penalty: this.modelConfig.frequency_penalty,
+                        stream: true
                     })
                 })
+
+                const reader = apiResponse.body!.getReader();
+                const decoder = new TextDecoder("utf-8")
+                let done = false
+
+                response = ""
+
+                while (!done) {
+                    const { value, done: readerDone } = await reader.read();
+                    done = readerDone;
+
+                    if (value) {
+                        const chunk = decoder.decode(value, {stream: true})
+                        response += chunk;
+                        console.log("New Chunk: " + chunk)
+                        console.log("Full response (so far!) " + response)
+                    }
+                }
                 break;
             case APIType.HuggingFace:
+                
                 break;
             case APIType.Google:
                 break;
             case APIType.Azure:
                 break;
             case APIType.Pollinations:
+                // polinations sadly has no support o
+                apiResponse = await fetch(this.API.endpoint + "/openai", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        model: this.modelConfig.model,
+                        messages: this.activeChat.messages,
+                    })
+                })
+                data = await apiResponse.json()
+                console.log("Recived response from API: " + JSON.stringify(data))
+                response = data.choices[0].message.content
                 break;
         }
-    }
-    
-    _HandleAPICall() {
 
+        console.log("Finished recieving or streaming response!")
+        console.log("Response: " + response);
+        console.log("=== END OF AI REPONSE ===")
     }
 }
