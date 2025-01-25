@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
 
-enum APIType {
+export enum APIType {
     OpenAI,
     HuggingFace,
     Google,
@@ -63,7 +63,7 @@ export class ModelDatabase {
     } 
 }
 
-class AIManager {
+export class AIManager {
     public API: APIConfig;
     public modelConfig: ModelConfig;
     public activeChat: Chat;
