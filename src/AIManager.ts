@@ -182,9 +182,12 @@ export class AIManager {
     async fetchResponse() {
         console.log("=== START AI RESPONSE ===")
         console.log("Model: " + this.modelConfig.model.identifier)
+
         let response: string = "";
         let apiResponse: any;
         let data: any;
+        let reader: any;
+        let decoder: TextDecoder;
 
     
         switch (this.API.type) {
@@ -208,8 +211,8 @@ export class AIManager {
                     })
                 })
 
-                const reader = apiResponse.body!.getReader();
-                const decoder = new TextDecoder("utf-8")
+                reader = apiResponse.body!.getReader();
+                decoder = new TextDecoder("utf-8")
                 let done = false
 
                 response = ""
@@ -227,7 +230,42 @@ export class AIManager {
                 }
                 break;
             case APIType.HuggingFace:
-                
+                apiResponse = await fetch(this.API.endpoint + encodeURIComponent("/models/" + this.modelConfig.model.identifier), {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": 'application/json',
+                        "Authorization": `Bearer ${this.API.key}`
+                    },
+                    body: JSON.stringify({
+                        inputs: this.activeChat.messages,
+                        parameters: {
+                            temperature: this.modelConfig.temperature,
+                            max_tokens: this.modelConfig.max_tokens,
+                            top_p: this.modelConfig.top_p,
+                            frequency_penalty: this.modelConfig.frequency_penalty,
+                            stream: true,
+                        }
+                    })
+                })
+
+                reader = apiResponse.body!.getReader();
+                decoder = new TextDecoder("utf-8")
+                done = false
+
+                response = ""
+
+                while (!done) {
+                    const { value, done: readerDone } = await reader.read();
+                    done = readerDone;
+
+                    if (value) {
+                        const chunk = decoder.decode(value, {stream: true})
+                        response += chunk;
+                        console.log("New Chunk: " + chunk)
+                        console.log("Full response (so far!) " + response)
+                    }
+                }
+
                 break;
             case APIType.Google:
                 break;
