@@ -60,7 +60,7 @@ export class ModelDatabase {
         if (this.models.has(key)) {
             this.modelKeys[key] = modelKey;
         }
-    } 
+    }
 }
 
 export class AIManager {
@@ -78,7 +78,11 @@ export class AIManager {
         };
 
         this.modelConfig = {
-            model: "",
+            model: {
+                friendlyName: "",
+                identifier: "",
+                description: ""
+            },
             temperature: 0.6,
             max_tokens: 4096,
             top_p: 0.9,
@@ -103,7 +107,7 @@ export class AIManager {
 
     async getModels() {
         const models = new Map<string, Model>();
-        let response: any; 
+        let response: any;
         let data: any;
 
         switch (this.API.type) {
@@ -129,20 +133,7 @@ export class AIManager {
                     }
                 }
             case APIType.HuggingFace:
-                response = await fetch("https://api.huggingface.co/v1/models?search=" + encodeURIComponent(this.modelConfig.model), {
-                    headers: {
-                        "Content-Type": "application/json",
-                    }
-                });
-                data = await response.json();
-                for (let model of data.results) {
-                    models.set(model.modelId, {
-                        friendlyName: model.modelId.split("/")[1],
-                        identifier: model.modelId,
-                        description: model.description,
-                    });
-                }
-                return models;
+                break;
             case APIType.Google:
                 break;
             case APIType.Azure:
@@ -183,18 +174,24 @@ export class AIManager {
         console.log("=== START AI RESPONSE ===")
         console.log("Model: " + this.modelConfig.model.identifier)
 
+        const messages = this.activeChat.messages.map(message => ({
+            role: message.role,
+            content: message.content
+        }));
+
         let response: string = "";
         let apiResponse: any;
         let data: any;
         let reader: any;
         let decoder: TextDecoder;
+        let done: boolean = false;
 
-    
+
         switch (this.API.type) {
             case APIType.OpenAI:
                 console.log("API Type: OpenAI")
                 console.log("SENDING REQUEST")
-                apiResponse = await fetch(this.API.endpoint + "/completions" , {
+                apiResponse = await fetch(this.API.endpoint + "/completions", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
@@ -213,43 +210,6 @@ export class AIManager {
 
                 reader = apiResponse.body!.getReader();
                 decoder = new TextDecoder("utf-8")
-                let done = false
-
-                response = ""
-
-                while (!done) {
-                    const { value, done: readerDone } = await reader.read();
-                    done = readerDone;
-
-                    if (value) {
-                        const chunk = decoder.decode(value, {stream: true})
-                        response += chunk;
-                        console.log("New Chunk: " + chunk)
-                        console.log("Full response (so far!) " + response)
-                    }
-                }
-                break;
-            case APIType.HuggingFace:
-                apiResponse = await fetch(this.API.endpoint + encodeURIComponent("/models/" + this.modelConfig.model.identifier), {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": 'application/json',
-                        "Authorization": `Bearer ${this.API.key}`
-                    },
-                    body: JSON.stringify({
-                        inputs: this.activeChat.messages,
-                        parameters: {
-                            temperature: this.modelConfig.temperature,
-                            max_tokens: this.modelConfig.max_tokens,
-                            top_p: this.modelConfig.top_p,
-                            frequency_penalty: this.modelConfig.frequency_penalty,
-                            stream: true,
-                        }
-                    })
-                })
-
-                reader = apiResponse.body!.getReader();
-                decoder = new TextDecoder("utf-8")
                 done = false
 
                 response = ""
@@ -259,10 +219,57 @@ export class AIManager {
                     done = readerDone;
 
                     if (value) {
-                        const chunk = decoder.decode(value, {stream: true})
+                        const chunk = decoder.decode(value, { stream: true })
                         response += chunk;
                         console.log("New Chunk: " + chunk)
                         console.log("Full response (so far!) " + response)
+                    }
+                }
+                break;
+            case APIType.HuggingFace:
+                apiResponse = await fetch(this.API.endpoint + "/models/" + this.modelConfig.model.identifier + "/v1/chat/completions", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": 'application/json',
+                        Authorization: `Bearer ${this.API.key}`
+                    },
+                    body: JSON.stringify({
+                        model: this.modelConfig.model.identifier,
+                        messages: messages,
+                        temperature: this.modelConfig.temperature,
+                        max_tokens: this.modelConfig.max_tokens,
+                        top_p: this.modelConfig.top_p,
+                        stream: true,
+                    })
+                })
+
+
+                reader = apiResponse.body!.getReader();
+                decoder = new TextDecoder("utf-8");
+                done = false;
+
+                response = ""
+
+                while (!done) {
+                    const { value, done: readerDone } = await reader.read();
+                    done = readerDone;
+
+                    if (value) {
+                        const chunk = decoder.decode(value, { stream: true });
+                        const realChunk = chunk.replace(/^data:\s*/, '').trim(); // Trim whitespace
+
+                        console.log("Raw Chunk: ", realChunk); // Log the raw chunk for inspection
+
+                        // Parse the JSON and check if it has the expected structure
+                        try {
+                            const parsedChunk = JSON.parse(realChunk);
+                            response += parsedChunk.choices[0].message.content + "\n"; // Add a newline or separator
+                            console.log("New Chunk: " + parsedChunk.choices[0].message.content);
+                        } catch (error) {
+                            console.error("Failed to parse chunk! Error:", error);
+                        }
+
+                        console.log("Full response (so far!): " + response);
                     }
                 }
 
