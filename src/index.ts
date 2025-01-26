@@ -2,17 +2,19 @@ import { AIManager, APIType } from './AIManager';
 
 const aiManager = new AIManager();
 aiManager.API = {
-    type: APIType.Pollinations,
-    key: "",
-    endpoint: "https://text.pollinations.ai"
+    type: APIType.HuggingFace,
+    key: import.meta.env.VITE_HF_API_KEY as string,
+    endpoint: "https://api-inference.huggingface.co"
 }
 
-aiManager.modelDB.models = await aiManager.getModels();
+console.log(aiManager.API.key)
+
+// aiManager.modelDB.models = await aiManager.getModels();
 aiManager.modelConfig = {
     model: {
-        friendlyName: "ChatGPT 4o",
-        identifier: "openai-large",
-        description: "OpenAI's Latest flagship model."
+        friendlyName: "DeepSeek R1",
+        identifier: "deepseek-ai/DeepSeek-R1-Distill-Qwen-32B",
+        description: "DeepSeek AI's First-gen reasoning model."
     },
     temperature: 0.6,
     max_tokens: 4096,
