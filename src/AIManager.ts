@@ -185,10 +185,13 @@ export class AIManager {
         let reader: any;
         let decoder: TextDecoder;
         let done: boolean = false;
+        let streamed: boolean = false;
 
+        this.sendMessage("assistant", "")
 
         switch (this.API.type) {
             case APIType.OpenAI:
+                streamed = true;
                 console.log("API Type: OpenAI")
                 console.log("SENDING REQUEST")
                 apiResponse = await fetch(this.API.endpoint + "/completions", {
@@ -199,7 +202,7 @@ export class AIManager {
                     },
                     body: JSON.stringify({
                         model: this.modelConfig.model,
-                        messages: this.activeChat.messages,
+                        messages: messages,
                         temperature: this.modelConfig.temperature,
                         max_tokens: this.modelConfig.max_tokens,
                         top_p: this.modelConfig.top_p,
@@ -208,25 +211,36 @@ export class AIManager {
                     })
                 })
 
-                reader = apiResponse.body!.getReader();
-                decoder = new TextDecoder("utf-8")
-                done = false
+                reader = apiResponse.body.getReader();
+                decoder = new TextDecoder('utf-8');
+                response = '';
 
-                response = ""
-
-                while (!done) {
-                    const { value, done: readerDone } = await reader.read();
-                    done = readerDone;
-
-                    if (value) {
-                        const chunk = decoder.decode(value, { stream: true })
-                        response += chunk;
-                        console.log("New Chunk: " + chunk)
-                        console.log("Full response (so far!) " + response)
+                while (true) {
+                    const { done, value } = await reader.read();
+                    if (done) break;
+                  
+                    const chunk = decoder.decode(value, { stream: true });
+                  
+                    const lines = chunk.split('\n');
+                    for (const line of lines) {
+                        if (line.startsWith('data: ') && line.trim() !== 'data: [DONE]') {
+                            const jsonString = line.substring(6); // Strip "data: "
+                            try {
+                                const parsedChunk = JSON.parse(jsonString);
+                                console.log('Processed chunk:', parsedChunk.choices[0].delta.content);
+                                response += parsedChunk.choices[0].delta.content;
+                                this.activeChat.messages[this.activeChat.messages.length - 1].content += parsedChunk.choices[0].delta.content
+                                // Handle the parsed chunk here
+                            } catch (err) {
+                                console.error('Error parsing chunk:', err);
+                            }
+                        }
                     }
                 }
+                
                 break;
             case APIType.HuggingFace:
+                streamed = true;
                 apiResponse = await fetch(this.API.endpoint + "/models/" + this.modelConfig.model.identifier + "/v1/chat/completions", {
                     method: "POST",
                     headers: {
@@ -244,35 +258,33 @@ export class AIManager {
                 })
 
 
-                reader = apiResponse.body!.getReader();
-                decoder = new TextDecoder("utf-8");
-                done = false;
+                reader = apiResponse.body.getReader();
+                decoder = new TextDecoder('utf-8');
+                response = '';
 
-                response = ""
-
-                while (!done) {
-                    const { value, done: readerDone } = await reader.read();
-                    done = readerDone;
-
-                    if (value) {
-                        const chunk = decoder.decode(value, { stream: true });
-                        const realChunk = chunk.replace(/^data:\s*/, '').trim(); // Trim whitespace
-
-                        console.log("Raw Chunk: ", realChunk); // Log the raw chunk for inspection
-
-                        // Parse the JSON and check if it has the expected structure
-                        try {
-                            const parsedChunk = JSON.parse(realChunk);
-                            response += parsedChunk.choices[0].message.content + "\n"; // Add a newline or separator
-                            console.log("New Chunk: " + parsedChunk.choices[0].message.content);
-                        } catch (error) {
-                            console.error("Failed to parse chunk! Error:", error);
+                while (true) {
+                    const { done, value } = await reader.read();
+                    if (done) break;
+                  
+                    const chunk = decoder.decode(value, { stream: true });
+                  
+                    const lines = chunk.split('\n');
+                    for (const line of lines) {
+                        if (line.startsWith('data: ') && line.trim() !== 'data: [DONE]') {
+                            const jsonString = line.substring(6); // Strip "data: "
+                            try {
+                                const parsedChunk = JSON.parse(jsonString);
+                                console.log('Processed chunk:', parsedChunk.choices[0].delta.content);
+                                response += parsedChunk.choices[0].delta.content;
+                                this.activeChat.messages[this.activeChat.messages.length - 1].content += parsedChunk.choices[0].delta.content
+                                // Handle the parsed chunk here
+                            } catch (err) {
+                                console.error('Error parsing chunk:', err);
+                            }
                         }
-
-                        console.log("Full response (so far!): " + response);
                     }
                 }
-
+                
                 break;
             case APIType.Google:
                 break;
@@ -298,6 +310,10 @@ export class AIManager {
 
         console.log("Finished recieving or streaming response!")
         console.log("Response: " + response);
+        console.log("Sending response to user (unless it was streamed)")
+        if (!streamed) {
+            this.sendMessage("assistant", response);
+        }
         console.log("=== END OF AI REPONSE ===")
     }
 }
