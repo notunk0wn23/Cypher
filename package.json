@@ -25,6 +25,11 @@
   },
   "homepage": "https://github.com/notunk0wn23/Cypher#readme",
   "dependencies": {
+    "@types/react": "^19.0.8",
+    "@types/react-dom": "^19.0.3",
+    "@vitejs/plugin-react": "^4.3.4",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
     "uuid": "^11.0.5",
     "vite": "^6.0.7"
   },
