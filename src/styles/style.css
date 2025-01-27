@@ -1,21 +1,157 @@
+/* CSS */
 @font-face {
-    font-family: 'Telegraf Regular';
-    src: local('Telegraf Regular'), url('../fonts/Telegraf_Regular.woff') format('woff');
+    font-family: 'Telegraf';
+    src: url('../fonts/Telegraf_Regular.woff') format('woff');
+    font-weight: 400;
 }
 
 @font-face {
-    font-family: 'Telegraf UltraLight';
-    src: local('Telegraf UltraLight'), url('../fonts/Telegraf_UltraLight\ 200.woff') format('woff');
+    font-family: 'Telegraf';
+    src: url('../fonts/Telegraf_UltraBold\ 800.woff') format('woff');
+    font-weight: 800;
 }
 
 @font-face {
-    font-family: 'Telegraf UltraBold';
-    src: local('Telegraf UltraBold'), url('../fonts/Telegraf_UltraBold\ 800.woff') format('woff');
+    font-family: 'Telegraf';
+    src: url('../fonts/Telegraf_UltraLight\ 200.woff') format('woff');
+    font-weight: 200;
 }
 
+@import url('https://fonts.googleapis.com/css2?family=Albert+Sans:wght@100;200;300;400;500;600;700;800;900&display=swap');
 
-html,
 body {
     margin: 0;
+    padding: 0;
+    font-family: 'Telegraf', sans-serif;
+    background-color: #131313;
+    color: #fff;
 }
 
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center; /* Change to flex-start to allow space for the tools list */
+    padding: 2rem; /* Add some padding to the container */
+    height: 100vh;
+}
+
+.header-text {
+    font-size: 64px;
+    font-weight: normal;
+    margin-bottom: 1rem;
+}
+
+#header-user {
+    font-weight: bold;
+}
+
+.message-box {
+   width: 80%;
+   display: flex;
+   flex-direction: column;
+   align-items: center;
+   max-width: 600px;
+}
+
+.input-container {
+    width: 100%;
+    background-color: #303030;
+    border-radius: 32px;
+    height: 200px;
+    box-sizing: border-box;
+    margin-bottom: -4rem; /* Add some margin below the input container */
+    z-index: 1;
+}
+
+.input-field {
+    font-family: 'Albert Sans', sans-serif;
+    width: 100%;
+    height: 100%;
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    border: none;
+    border-radius: 4px;
+    background-color: transparent;
+    color: #fff;
+    box-sizing: border-box;
+    text-align: right;
+    vertical-align: top;
+}
+
+.tools-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #202020;
+    padding: 5rem 1rem 1rem 1rem;
+    border-radius: 30px;
+    width: 100%;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    z-index: 0;
+}
+
+.tools-container-header {
+    font-size: 1.2rem;
+    font-weight: normal;
+    margin-bottom: 0.5rem;
+}
+
+.tools-list {
+    max-width: 100%;
+    width: 100%;
+    display: flex;
+    overflow-x: auto;
+    white-space: nowrap;
+    gap: 1px;
+    padding-bottom: 10px;
+    scrollbar-width: thin;
+}
+
+/* Custom scrollbar for WebKit browsers */
+.tools-list::-webkit-scrollbar {
+    height: 8px;
+}
+
+.tools-list::-webkit-scrollbar-thumb {
+    background: #555;
+    border-radius: 10px;
+}
+
+.tools-list::-webkit-scrollbar-track {
+    background: #303030;
+}
+
+.tool-button {
+    display: inline-block;
+    background-color: #303030;
+    color: #fff;
+    border: none;
+    border-radius: 50px;
+    padding: 0.75rem 1rem;
+    font-size: 0.9rem;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.tool-button:hover {
+    background-color: #3c3c3c;
+}
+
+@media (max-width: 768px) {
+    .header {
+        font-size: 2rem;
+    }
+
+    .input-container {
+        width: 90%;
+    }
+
+    .tools-container {
+        width: 90%;
+    }
+
+    .tool-button {
+        margin: 0.5rem;
+    }
+}
