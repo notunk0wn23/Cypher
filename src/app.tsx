@@ -1,7 +1,8 @@
-import React from 'react'
+// app.tsx
+import React, { useState } from 'react';
+import { AIManager, APIType } from './AIManager'; // Adjust the import path as necessary
 
-// just temp till I can get an account system
-const user: string = "user"
+const user: string = "user";
 
 function Greeting() {
     return (
@@ -10,16 +11,31 @@ function Greeting() {
             <span className='greeting-text greeting-text-user'>{user}</span>
             <span className='greeting-text'>.</span>
         </div>
-    )
+    );
 }
 
+function MessageInputBox({ onSend }) {
+    const [message, setMessage] = useState('');
 
-function MessageInputBox() {
+    const handleSend = () => {
+        if (message.trim()) {
+            onSend(message);
+            setMessage('');
+        }
+    };
+
     return (
         <div className='message-input-container'>
-            <textarea name="" id="" cols="30" rows="10" className='message-input'></textarea>
+            <textarea
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+                cols="30"
+                rows="10"
+                className='message-input'
+            ></textarea>
+            <button onClick={handleSend} className='message-input-send'>Send</button>
         </div>
-    )
+    );
 }
 
 function Tool({ name, description }) {
@@ -27,7 +43,7 @@ function Tool({ name, description }) {
         <div title={description} className='tool-select-chip-container'>
             <span className="tool-select-chip-text">{name}</span>
         </div>
-    )
+    );
 }
 
 function ToolSelectBox() {
@@ -42,18 +58,51 @@ function ToolSelectBox() {
                 <Tool name="Web Access" description="Web Access description" />
                 <Tool name="WebContainers" description="WebContainers description" />
             </div>
-
         </div>
-    )
+    );
 }
 
 function ChatBox() {
+    const [aiManager] = useState(new AIManager());
+    aiManager.API = {
+        type: APIType.HuggingFace,
+        key: import.meta.env.VITE_HF_API_KEY as string,
+        endpoint: "https://api-inference.huggingface.co"
+    }
+    
+    console.log(aiManager.API.key)
+    
+    // aiManager.modelDB.models = await aiManager.getModels();
+    aiManager.modelConfig = {
+        model: {
+            friendlyName: "DeepSeek R1",
+            identifier: "deepseek-ai/DeepSeek-R1-Distill-Qwen-32B",
+            description: "DeepSeek AI's First-gen reasoning model."
+        },
+        temperature: 0.6,
+        max_tokens: 4096,
+        top_p: 0.9,
+        frequency_penalty: 0.4
+    }
+    
+
+    const handleSendMessage = async (content) => {
+        // Send user message
+        aiManager.sendMessage("user", content);
+        
+        // Fetch AI response
+        await aiManager.fetchResponse();
+        
+        // You can add logic here to update the UI with the new messages
+        console.log(aiManager.activeChat.messages); // For debugging
+    };
+
     return (
         <div className='chat-box'>
-            <MessageInputBox />
+            <MessageInputBox onSend={handleSendMessage} />
             <ToolSelectBox />
         </div>
-    )
+    );
 }
 
 function App() {
@@ -62,7 +111,7 @@ function App() {
             <Greeting />
             <ChatBox />
         </div>
-    )
+    );
 }
 
-export default App
+export default App;

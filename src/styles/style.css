@@ -127,3 +127,17 @@ body {
     max-width: 550px;
 }
 
+.message-input-send {
+    position: absolute;
+    right: 0;
+    border-radius: 100px;
+    border: none;
+    background-color: #303030;
+    color: #fff;
+    cursor: pointer;
+    padding: 0.90rem 1rem;
+}
+
+.message-input-send:hover {
+    background-color: #3f3f3f;
+}
