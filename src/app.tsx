@@ -1,5 +1,4 @@
 import React from 'react'
-import { AIManager } from './AIManager'
 
 // just temp till I can get an account system
 const user: string = "user"
