@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
+import ReactMarkdown from "react-markdown";
 import { AIManager, APIType, Message } from "./AIManager";
 
 // just temp till I can get an account system
@@ -75,16 +76,16 @@ function ToolSelectBox() {
 }
 
 function ChatMessages({ messages }) {
-  return (
-    <div className="chat-messages">
-      {messages.map((msg, index) => (
-        <div key={index} className={`message message-${msg.role}`}>
-          <span>{msg.content}</span>
-        </div>
-      ))}
-    </div>
-  );
-}
+    return (
+      <div className="chat-messages">
+        {messages.map((msg, index) => (
+          <div key={index} className={`message message-${msg.role}`}>
+            <ReactMarkdown>{msg.content}</ReactMarkdown>
+          </div>
+        ))}
+      </div>
+    );
+  }
 
 function ChatBox({ onSendMessage }) {
   return (
@@ -118,21 +119,29 @@ function App() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [aiManager, _] = useState<AIManager>(new AIManager());
 
+  aiManager.subscribe((type: string, data: any) => {
+    switch(type) {
+        case "messageChunkStreamed":
+            console.log("mmm, chunky")
+            setMessages([...aiManager.activeChat.messages]);
+            break;
+    }
+  })
   aiManager.API = {
-    type: APIType.Pollinations,
-    key: import.meta.env.VITE_HF_API_KEY as string,
-    endpoint: "https://text.pollinations.ai",
+    type: APIType.OpenAI,
+    key: import.meta.env.VITE_GROQ_API_KEY as string,
+    endpoint: "https://api.groq.com/openai/v1",
   };
 
   // aiManager.modelDB.models = await aiManager.getModels();
   aiManager.modelConfig = {
     model: {
-      friendlyName: "ChatGPT 4o",
-      identifier: "openai-large",
-      description: "OpenAI's next-generation of GPT-4",
+      friendlyName: "llama",
+      identifier: "llama-3.3-70b-versatile",
+      description: "DeepSeek's 1st reasoning model.",
     },
     temperature: 0.6,
-    max_tokens: 4096,
+    max_tokens: 16384,
     top_p: 0.9,
     frequency_penalty: 0.4,
   };
@@ -141,7 +150,7 @@ function App() {
     console.log("new user message: " + message)
     aiManager.sendMessage("user", message);
     setMessages([...aiManager.activeChat.messages]); // Update UI with new messages
-    await aiManager.fetchResponse();
+    aiManager.fetchResponse();
     setMessages([...aiManager.activeChat.messages]); // Update UI with new messages
   };
 
