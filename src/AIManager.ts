@@ -100,7 +100,7 @@ export class AIManager {
 
   subscribe(callback: any) {
     this.subscribers.push(callback);
-    console.log("registered callback")
+    console.log("registered callback");
   }
 
   // Unsubscribe when necessary
@@ -213,14 +213,14 @@ export class AIManager {
     switch (this.API.type) {
       case APIType.OpenAI:
         console.log({
-            model: this.modelConfig.model.identifier,
-            messages: messages,
-            temperature: this.modelConfig.temperature,
-            max_tokens: this.modelConfig.max_tokens,
-            top_p: this.modelConfig.top_p,
-            frequency_penalty: this.modelConfig.frequency_penalty,
-            stream: true,
-          })
+          model: this.modelConfig.model.identifier,
+          messages: messages,
+          temperature: this.modelConfig.temperature,
+          max_tokens: this.modelConfig.max_tokens,
+          top_p: this.modelConfig.top_p,
+          frequency_penalty: this.modelConfig.frequency_penalty,
+          stream: true,
+        });
         streamed = true;
         console.log("API Type: OpenAI");
         console.log("SENDING REQUEST");
@@ -267,9 +267,9 @@ export class AIManager {
                   this.activeChat.messages.length - 1
                 ].content += parsedChunk.choices[0].delta.content;
                 this.notifySubscribers("messageChunkStreamed", {
-                    chunk: parsedChunk.choices[0].delta.content,
-                    messages: this.activeChat.messages,
-                })
+                  chunk: parsedChunk.choices[0].delta.content,
+                  messages: this.activeChat.messages,
+                });
                 // Handle the parsed chunk here
               } catch (err) {
                 console.error("Error parsing chunk:", err);
@@ -322,17 +322,22 @@ export class AIManager {
               try {
                 const parsedChunk = JSON.parse(jsonString);
                 console.log(
-                  "Processed chunk:",
+                  "Processed chunk:", 
                   parsedChunk.choices[0].delta.content
                 );
-                response += parsedChunk.choices[0].delta.content;
-                this.activeChat.messages[
-                  this.activeChat.messages.length - 1
-                ].content += parsedChunk.choices[0].delta.content;
-                this.notifySubscribers("messageChunkStreamed", {
+                if (parsedChunk.choices[0].delta.content && parsedChunk.choices[0].delta.content != "undefined") {
+                  response += parsedChunk.choices[0].delta.content;
+
+                  this.activeChat.messages[
+                    this.activeChat.messages.length - 1
+                  ].content += parsedChunk.choices[0].delta.content;
+                  this.notifySubscribers("messageChunkStreamed", {
                     chunk: parsedChunk.choices[0].delta.content,
                     messages: this.activeChat.messages,
-                })
+                  });  
+                } else {
+                  console.log("Not sending last chunk (undefined)")
+                }
 
                 // Handle the parsed chunk here
               } catch (err) {
@@ -371,7 +376,7 @@ export class AIManager {
     if (!streamed) {
       this.sendMessage("assistant", response);
     }
-    this.notifySubscribers("messageFinish", response)
+    this.notifySubscribers("messageFinish", response);
     console.log("=== END OF AI REPONSE ===");
   }
 }
