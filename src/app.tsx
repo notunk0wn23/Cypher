@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { AIManager, APIType, Message } from "./AIManager";
+import '@fortawesome/fontawesome-free/css/all.min.css';
+
 
 // Components
 import { ChatMenu, NewChatMenu } from "./components/Menus";
