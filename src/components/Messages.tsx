@@ -14,36 +14,7 @@ import "prismjs/plugins/autoloader/prism-autoloader.min.js";
 // Load common languages
 Prism.plugins.autoloader.languages_path =
   "https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/";
-Prism.plugins.autoloader.loadLanguages([
-  "python",
-  "java",
-  "javascript",
-  "cpp",
-  "c",
-  "ruby",
-  "swift",
-  "php",
-  "go",
-  "rust",
-  "typescript",
-  "markup",
-  "css",
-  "sql",
-  "bash",
-  "kotlin",
-  "objectivec",
-  "r",
-  "dart",
-  "lua",
-  "haskell",
-  "perl",
-  "csharp",
-  "shell",
-  "markdown",
-  "dockerfile",
-  "yaml",
-  "json",
-]);
+  Prism.plugins.autoloader.loadLanguages(["python", "javascript", "typescript", "html", "css"]);
 
 function ActionButton({ onClick, icon }) {
   return (

@@ -1,4 +1,4 @@
-import { AIManager, APIType } from './AIManager';
+import { AIManager, APIType } from './utils/AIManager';
 
 const aiManager = new AIManager();
 

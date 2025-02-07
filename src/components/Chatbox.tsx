@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import ContentEditable from 'react-contenteditable';
+
 function MessageInputBox({ onSendMessage }) {
   const [message, setMessage] = useState("");
 

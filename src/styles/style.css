@@ -205,3 +205,15 @@ body {
 pre {
   border-radius: 25px;
 }
+
+.message-input-preview {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin-bottom: 10px;
+}
+
+.message-input-preview-markdown {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
