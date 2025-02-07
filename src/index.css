@@ -20,174 +20,28 @@
 }
 
 
-
-@font-face {
-  font-family: 'NeueCorp-Compact';
-  src: url('./assets/fonts/NeueCorp/PPNeueCorp-CompactMedium.otf') format('opentype');
-  font-weight: normal;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: 'NeueCorp-Compact';
-  src: url('./assets/fonts/NeueCorp/PPNeueCorp-CompactUltrabold.otf') format('opentype');
-  font-weight: bold;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: 'NeueCorp-Compact';
-  src: url('./assets/fonts/NeueCorp/PPNeueCorp-CompactUltralight.otf') format('opentype');
-  font-weight: lighter;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: 'NeueCorp-Compressed';
-  src: url('./assets/fonts/NeueCorp/PPNeueCorp-CompressedMedium.otf') format('opentype');
-  font-weight: normal;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: 'NeueCorp-Compressed';
-  src: url('./assets/fonts/NeueCorp/PPNeueCorp-CompressedUltrabold.otf') format('opentype');
-  font-weight: bold;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: 'NeueCorp-Compressed';
-  src: url('./assets/fonts/NeueCorp/PPNeueCorp-CompressedUltralight.otf') format('opentype');
-  font-weight: lighter;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: 'NeueCorp-Condensed';
-  src: url('./assets/fonts/NeueCorp/PPNeueCorp-CondensedMedium.otf') format('opentype');
-  font-weight: normal;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: 'NeueCorp-Condensed';
-  src: url('./assets/fonts/NeueCorp/PPNeueCorp-CondensedUltrabold.otf') format('opentype');
-  font-weight: bold;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: 'NeueCorp-Condensed';
-  src: url('./assets/fonts/NeueCorp/PPNeueCorp-CondensedUltralight.otf') format('opentype');
-  font-weight: lighter;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: 'NeueCorp-Extended';
-  src: url('./assets/fonts/NeueCorp/PPNeueCorp-ExtendedMedium.otf') format('opentype');
-  font-weight: normal;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: 'NeueCorp-Extended';
-  src: url('./assets/fonts/NeueCorp/PPNeueCorp-ExtendedUltrabold.otf') format('opentype');
-  font-weight: bold;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: 'NeueCorp-Extended';
-  src: url('./assets/fonts/NeueCorp/PPNeueCorp-ExtendedUltralight.otf') format('opentype');
-  font-weight: lighter;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: 'NeueCorp-Narrow';
-  src: url('./assets/fonts/NeueCorp/PPNeueCorp-NarrowMedium.otf') format('opentype');
-  font-weight: normal;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: 'NeueCorp-Narrow';
-  src: url('./assets/fonts/NeueCorp/PPNeueCorp-NarrowUltrabold.otf') format('opentype');
-  font-weight: bold;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: 'NeueCorp-Narrow';
-  src: url('./assets/fonts/NeueCorp/PPNeueCorp-NarrowUltralight.otf') format('opentype');
-  font-weight: lighter;
-  font-style: normal;
-}
-
 @font-face {
   font-family: 'NeueCorp';
   src: url('./assets/fonts/NeueCorp/PPNeueCorp-NormalMedium.otf') format('opentype');
-  font-weight: normal;
+  font-weight: 400;
   font-style: normal;
 }
 
 @font-face {
   font-family: 'NeueCorp';
   src: url('./assets/fonts/NeueCorp/PPNeueCorp-NormalUltrabold.otf') format('opentype');
-  font-weight: bold;
+  font-weight: 800;
   font-style: normal;
 }
 
 @font-face {
   font-family: 'NeueCorp';
   src: url('./assets/fonts/NeueCorp/PPNeueCorp-NormalUltralight.otf') format('opentype');
-  font-weight: lighter;
+  font-weight: 200;
   font-style: normal;
 }
 
-@font-face {
-  font-family: 'NeueCorp-Tight';
-  src: url('./assets/fonts/NeueCorp/PPNeueCorp-TightMedium.otf') format('opentype');
-  font-weight: normal;
-  font-style: normal;
-}
 
-@font-face {
-  font-family: 'NeueCorp-Tight';
-  src: url('./assets/fonts/NeueCorp/PPNeueCorp-TightUltrabold.otf') format('opentype');
-  font-weight: bold;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: 'NeueCorp-Tight';
-  src: url('./assets/fonts/NeueCorp/PPNeueCorp-TightUltralight.otf') format('opentype');
-  font-weight: lighter;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: 'NeueCorp-Wide';
-  src: url('./assets/fonts/NeueCorp/PPNeueCorp-WideMedium.otf') format('opentype');
-  font-weight: normal;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: 'NeueCorp-Wide';
-  src: url('./assets/fonts/NeueCorp/PPNeueCorp-WideUltrabold.otf') format('opentype');
-  font-weight: bold;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: 'NeueCorp-Wide';
-  src: url('./assets/fonts/NeueCorp/PPNeueCorp-WideUltralight.otf') format('opentype');
-  font-weight: lighter;
-  font-style: normal;
-}
 
 
 :root {
