@@ -1,3 +1,9 @@
-.greeting {
-    font-family: "Telegraf", "NeueCorp", Arial, sans-serif;
+.greeting-text {
+    font-family: "Telegraf";
+    font-size: 3rem;
+    font-weight: bold;
+}
+
+.greeting-user {
+    font-weight: normal;
 }
