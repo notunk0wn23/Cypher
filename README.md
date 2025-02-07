@@ -9,7 +9,7 @@ It should be fast to get responses & fast to use overall. Don't make me spend 5 
 Too many companies have powerful AI models that can do so much more through raw text communication, but chose not to. I actually *want* to use my AI for cool things.
 
 ### Customization
-AI should adapt to you, not the other way round. We give full control over how things act; Tools, 
+AI should adapt to you, not the other way round. We give full control over how things act; Tools, Prompts, Memories, all of it.
 
 ### Privacy
 Let me make this much clear:
