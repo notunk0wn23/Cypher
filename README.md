@@ -34,3 +34,4 @@ Then, install dependencies and run the app using:
 npm install
 npm run dev
 ```
+See how easy that was?
