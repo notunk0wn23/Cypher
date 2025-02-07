@@ -35,3 +35,12 @@ npm install
 npm run dev
 ```
 See how easy that was?
+
+## FAQ
+### I like the design! Where is it?
+[This Figma file.](https://www.figma.com/design/fZomgGcJz0OYQetDRV5Ak6/Cypher-UI?node-id=1-36&t=ThyccajyVaPbH7IM-1)
+Note that it might be a little out of sync with the actual UI.
+
+### What is that *beautiful* font you're using in some areas?
+You're either thinking of [Telegraf](https://pangrampangram.com/products/telegraf) or [NeueCorp](https://pangrampangram.com/products/neue-corp).
+Go check out Pangram Pangram, they are cool people, they make great fonts.
