@@ -9,28 +9,85 @@
   background: transparent;
   font-family: "NeueCorp";
   flex: 1;
+  outline: none;
 }
 
-.message-input-container {  
-    display: flex;
-    place-items: center;
-    justify-content: space-between;
-    width: 100%;
-    max-width: 600px;
-    margin-bottom: 10px;
-    background-color: #303030;
-    padding: 1rem;
-    height: 10rem;
-    border-radius: 30px;
-    box-shadow: 0px 10px 25px rgba(0, 0, 0, 0.25); /* Add dropshadow */
+.message-input-container {
+  place-items: center;
+  /* justify-content: space-between; Remove this line */
+  width: calc(100% - 5rem);
+  margin-bottom: 10px;
+  background-color: #303030;
+  padding: 1rem;
+  height: 10rem;
+  border-radius: 30px;
+  box-shadow: 0px 10px 25px rgba(0, 0, 0, 0.25);
+  z-index: 1;
+  display: flex; /* Add this line */
 }
 
 .message-box-container {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    border-radius: 5px;
-    margin-bottom: 20px;
-    max-width: 750px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-radius: 5px;
+  margin-bottom: 20px;
+  max-width: 850px;
+}
+
+.tools-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin-top: 10px;
+  background-color: #202020;
+  padding: 1.5rem;
+  border-radius: 30px;
+  padding-top: 10rem;
+  margin-top: -9rem;
+
+  width: calc(100% - 7rem);
+}
+
+.tools-list {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  white-space: nowrap;
+  padding-bottom: 10px;
+  gap: 0.5rem;
+
+  /* Hide Scrollbars */
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.tool-chip {
+  padding: 0.5rem 1.5rem;
+  background-color: #303030;
+  border-radius: 50px;
+  font-family: "Telegraf";
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.message-send {
+  /* Add these lines */
+  margin-left: auto;
+  align-self: flex-end;
+  border-radius: 50px;
+  border: none;
+  padding: 0.5rem;
 }
